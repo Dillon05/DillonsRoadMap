@@ -1,7 +1,28 @@
-# Dillon's Cybersecurity Roadmap  
+# 🚀 Dillon's Cybersecurity Roadmap
 
 This repository tracks my cybersecurity journey at UTSA (2025–2026).  
+It includes certifications, homelab projects, diagrams, and resume drafts as I prepare for graduation in **December 2026**.
 
-- [My Roadmap](roadmap.md)  
-- Projects will be documented here as I build them (Proxmox lab, SIEM, VPN, etc).  
-- Certifications progress will also be logged.  
+---
+
+## 📜 Roadmap
+- [My Roadmap Checklist](roadmap.md)
+
+---
+
+## 📂 Repository Contents
+- [Certifications](certs/) → Notes, resources, and progress for each cert.  
+- [Projects](projects/) → Proxmox lab, VPN setup, SIEM lab, and more.  
+- [Diagrams](diagrams/) → Network maps and architecture diagrams.  
+- [Resume](resume/) → Draft resumes and portfolio notes.  
+
+---
+
+## 🎯 Goals Before Graduation
+- ✅ Earn **CompTIA Security+**  
+- ✅ Complete **Cloud Fundamentals (AWS or Azure)**  
+- 🛠️ Build & document **Proxmox + TrueNAS + Jellyfin homelab**  
+- 🛠️ Set up **WireGuard VPN for secure remote access**  
+- 🛠️ Deploy a **SIEM lab with Wazuh** and practice incident response  
+- 🎓 Land an **internship (Summer 2026)**  
+- 🎯 Graduate job-ready with multiple certs and projects on display
