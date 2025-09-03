@@ -1,0 +1,31 @@
+# 🎯 Cybersecurity Roadmap Checklist (Now → Dec 2026)
+
+| Timeframe        | Category       | Task/Goal                                                                 | Status |
+|------------------|----------------|---------------------------------------------------------------------------|--------|
+| **Fall 2025**    | Certifications | ✅ CompTIA Security+                                                      | [ ]    |
+|                  |                | ✅ Cloud Fundamentals (AWS Cloud Practitioner or Azure AZ-900)             | [ ]    |
+|                  | Homelab        | Organize VM/container IPs with static scheme                              | [ ]    |
+|                  |                | Set up WireGuard VPN for secure remote access                             | [ ]    |
+|                  |                | Document Proxmox + TrueNAS + Jellyfin + AMP stack on GitHub               | [ ]    |
+|                  |                | Add network diagram & screenshots                                         | [ ]    |
+|                  | Career Prep    | Update LinkedIn with homelab projects                                     | [ ]    |
+|                  |                | Apply for Summer 2026 internships (apps open Oct–Dec)                     | [ ]    |
+| **Spring 2026**  | Certifications | Earn eJPT (Junior Pen Tester)                                             | [ ]    |
+|                  |                | (Optional) CompTIA CySA+                                                  | [ ]    |
+|                  | Homelab        | Deploy SIEM (Wazuh VM) on Proxmox                                         | [ ]    |
+|                  |                | Add Windows + Linux endpoints with logging agents                         | [ ]    |
+|                  |                | Add Kali attacker VM → simulate attacks (SSH brute-force, scans, etc.)    | [ ]    |
+|                  |                | Write incident response reports → publish to GitHub                       | [ ]    |
+|                  | Career Prep    | Join/compete in NCL, UTSA CCDC, or CTF events                             | [ ]    |
+|                  |                | Apply aggressively for Summer 2026 internships                            | [ ]    |
+| **Summer 2026**  | Internship     | Secure internship (SOC analyst, security intern, IT/network security)     | [ ]    |
+|                  | Alt. Path      | HackTheBox / TryHackMe labs with write-ups if no internship               | [ ]    |
+|                  |                | Volunteer IT/security work for local orgs                                 | [ ]    |
+|                  |                | Complete another cert (CCNA or CySA+)                                     | [ ]    |
+| **Fall 2026**    | Certifications | Pick one advanced cert: PNPT / OSCP / CySA+ / Splunk / AWS Security       | [ ]    |
+|                  | Homelab        | Build Mini SOC (pfSense + IDS/IPS + SIEM + Attacker VM)                   | [ ]    |
+|                  |                | Document full case study → GitHub + LinkedIn                              | [ ]    |
+|                  | Career Prep    | Finalize resume → highlight certs, projects, internship                   | [ ]    |
+|                  |                | Do mock interviews (classmates/mentors)                                   | [ ]    |
+|                  |                | Apply to full-time jobs (start Oct 2026)                                  | [ ]    |
+
