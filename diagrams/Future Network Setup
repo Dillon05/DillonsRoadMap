@@ -1,12 +1,15 @@
-[Spectrum Modem] 
-      │  (WAN, public IP from Spectrum)
-      ▼
-[VLAN-Capable Router / Firewall]   ← pfSense / OPNsense box, UniFi, MikroTik, etc.
-      │
-      ├──> [Orbi in AP Mode]  ← Wi-Fi for family (SSID = Home, Guest, etc.)
-      │
-      └──> [Ethernet Run to Your Room]
-                │
-          [Managed Switch]
-                ├──> Your PC (access port, VLAN 20 maybe)
-                └──> Proxmox Server (trunk port, carries VLAN 10/20/30)
+[Spectrum Modem]
+       │
+   (WAN port)
+       ▼
+ [pfSense PC]
+   (LAN port)
+       │
+       ▼
+ [Managed Switch]
+    ├──> [Orbi Router in AP Mode]   → Wi-Fi for family
+    └──> [Ethernet run to your room]
+              ▼
+          [Room Switch]
+            ├──> Your PC
+            └──> Proxmox Server
