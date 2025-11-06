@@ -1,0 +1,204 @@
+# ============================================================
+# Project 3 – OPNsense Router on Dell OptiPlex 5070
+# ============================================================
+# This is my personal documentation for replacing my consumer
+# router with an OPNsense firewall running on a Dell OptiPlex 5070.
+# It's written as a technical log, not meant to be executed.
+# ============================================================
+
+
+# ------------------------------------------------------------
+# 1. OVERVIEW
+# ------------------------------------------------------------
+# After proving out Proxmox and AMP, I wanted full control over my
+# network instead of relying on an ISP/consumer router.
+#
+# My goals with the OptiPlex + OPNsense were:
+# - Move routing, DHCP, and firewall to a dedicated box.
+# - Gain granular control over NAT, rules, and future VLANs.
+# - Build a "real" edge firewall similar to what’s used in
+#   production environments.
+
+
+# ------------------------------------------------------------
+# 2. HARDWARE
+# ------------------------------------------------------------
+# Device:
+# - Dell OptiPlex 5070 (repurposed as a firewall)
+#
+# Key points:
+# - 64-bit CPU with virtualization support (not required but useful).
+# - At least 4GB RAM (I prefer 8GB+ for comfort/logging).
+# - Storage:
+#   - Small SSD is enough for OPNsense.
+# - Network:
+#   - Ideally 2+ NICs:
+#       - WAN: to ISP modem
+#       - LAN: to internal switch
+#   - If it started with a single NIC, I planned around that,
+#     but the goal is a dedicated WAN/LAN separation.
+
+
+# ------------------------------------------------------------
+# 3. OPNsense INSTALLATION
+# ------------------------------------------------------------
+
+# 3.1 Download ISO
+# - I downloaded the latest OPNsense ISO from the official site.
+
+# 3.2 Create Bootable USB
+# - On another machine, I flashed the OPNsense ISO to a USB drive
+#   using Rufus/balenaEtcher/etc.
+
+# 3.3 BIOS/UEFI Setup on the OptiPlex
+# - Entered BIOS and:
+#   - Set the USB drive as primary boot device (for install).
+#   - Ensured boot mode (UEFI/Legacy) matched the OPNsense image.
+# - Saved changes and rebooted into the installer.
+
+# 3.4 Install OPNsense
+# - Booted from USB into the OPNsense live environment.
+# - Launched the installer from the console menu.
+# - Selected:
+#   - Target disk (SSD inside the OptiPlex).
+#   - Default partitioning (sufficient for my use).
+#   - Root password.
+# - After install:
+#   - Removed the USB.
+#   - Rebooted into OPNsense from the internal drive.
+
+
+# ------------------------------------------------------------
+# 4. BASIC NETWORK SETUP
+# ------------------------------------------------------------
+
+# At this point, I wired the network as:
+# - Spectrum Modem (bridge/router mode) -> WAN NIC on OptiPlex
+# - LAN NIC on OptiPlex -> Managed Switch
+
+# 4.1 Interface Assignment
+# - On the OPNsense console (direct monitor/keyboard):
+#   - Assigned:
+#       - WAN interface (connected to modem).
+#       - LAN interface (connected to my internal switch).
+# - LAN was given a default IP like:
+#   - 192.168.1.1/24 (later adjusted as my design evolved).
+
+# 4.2 Accessing Web UI
+# - Plugged my PC into the LAN side.
+# - Opened:
+#   https://192.168.1.1
+# - Logged in with:
+#   - user: root
+#   - pass: (password set during install or default if not changed yet).
+
+# 4.3 Initial Configuration Wizard
+# - Ran through the setup wizard:
+#   - Set hostname and domain (e.g., opnsense.local).
+#   - Configured WAN:
+#       - DHCP (from ISP) or static, depending on modem setup.
+#   - Confirmed LAN settings (IP/Subnet).
+#   - Set DNS servers (either ISP, public, or my choice).
+# - Applied changes and verified:
+#   - OPNsense had internet access from the firewall itself.
+#   - LAN clients received IPs via DHCP.
+
+
+# ------------------------------------------------------------
+# 5. MIGRATING FROM CONSUMER ROUTER
+# ------------------------------------------------------------
+
+# - I physically removed my old router from the path.
+# - I connected:
+#   - Modem -> OPNsense WAN
+#   - OPNsense LAN -> Managed switch -> All devices
+# - I confirmed:
+#   - LAN devices received IPs from OPNsense.
+#   - They could reach the internet.
+#   - NAT outbound was working as expected.
+
+# At this point, the OptiPlex with OPNsense officially became
+# my primary router and firewall.
+
+
+# ------------------------------------------------------------
+# 6. BASELINE FIREWALL & SERVICES
+# ------------------------------------------------------------
+
+# 6.1 Default Rules
+# - I kept the default behavior initially:
+#   - Allow LAN -> any (outbound).
+#   - Block inbound unsolicited WAN traffic.
+#
+# This gave me a secure-by-default posture compared to
+# random port forwards on a consumer router.
+
+# 6.2 DHCP & DNS
+# - Enabled/confirmed DHCP on LAN:
+#   - Set a usable IP range.
+#   - Added static mappings for key devices as needed.
+#
+# - Configured DNS:
+#   - Either:
+#       - Use external resolvers, or
+#       - Have OPNsense forward/resolve for clients.
+
+# 6.3 Remote Management
+# - Limited management access to LAN only.
+# - Left WAN management disabled to avoid exposing the firewall UI.
+
+
+# ------------------------------------------------------------
+# 7. PREPARING FOR FUTURE FEATURES
+# ------------------------------------------------------------
+
+# Once OPNsense was stable as my edge router, I set it up
+# with future plans in mind:
+
+# - I knew I wanted:
+#   - VLANs for different device groups.
+#   - Proper firewall rules for segmentation.
+#   - WireGuard for remote access.
+#   - Integration with my managed switches.
+
+# - This OptiPlex/OPNsense setup became the anchor:
+#   - All future VLANs and security controls would be enforced here.
+#   - It gave me full visibility into traffic instead of a
+#     black-box ISP router.
+
+
+# ------------------------------------------------------------
+# 8. VALIDATION
+# ------------------------------------------------------------
+
+# I validated the migration by:
+# - Rebooting the modem + OPNsense and making sure:
+#   - WAN pulled a valid IP.
+#   - LAN clients restored connectivity automatically.
+# - Running:
+#   - ping and traceroute from LAN devices.
+#   - Speed tests to confirm performance was not degraded.
+# - Confirming no one at home noticed outages beyond the
+#   brief cutover window.
+
+# This confirmed the OptiPlex 5070 with OPNsense was stable
+# enough to be my daily driver firewall.
+
+
+# ------------------------------------------------------------
+# 9. RESULT
+# ------------------------------------------------------------
+# - I replaced the consumer router with a dedicated OPNsense
+#   firewall running on a Dell OptiPlex 5070.
+# - This gave me:
+#   - Full control over routing, NAT, DHCP, and DNS.
+#   - A proper platform for:
+#       - VLANs and segmentation.
+#       - VPN (WireGuard).
+#       - Logging, monitoring, and future Security Onion work.
+#
+# This step turned my homelab from "some servers on a home
+# network" into a more realistic, security-focused environment.
+# ------------------------------------------------------------
+
+# End of Project 3 documentation
