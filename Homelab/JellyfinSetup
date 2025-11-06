@@ -1,0 +1,185 @@
+# ============================================================
+# Project 4 – Self-Hosted Media with Jellyfin
+# ============================================================
+# This is my personal documentation for how I deployed Jellyfin
+# in my homelab to stream my own media. It's a log, not a script.
+# ============================================================
+
+
+# ------------------------------------------------------------
+# 1. OVERVIEW
+# ------------------------------------------------------------
+# After getting Proxmox online and my router under control, I wanted
+# a self-hosted media server so I (and my family) didn’t have to rely
+# on third-party platforms for our own content.
+#
+# I chose Jellyfin because:
+# - It's fully open source.
+# - It runs well on modest hardware.
+# - It fits perfectly into my existing Proxmox + home network stack.
+
+
+# ------------------------------------------------------------
+# 2. ENVIRONMENT
+# ------------------------------------------------------------
+# At this point my setup looked like:
+# - Proxmox VE host running my main workloads.
+# - OPNsense on the OptiPlex as the primary router/firewall.
+#
+# For Jellyfin specifically:
+# - I provisioned a VM or container (depending on what I was testing):
+#   - 2–4 vCPU
+#   - 4–8GB RAM (tuned based on transcoding needs)
+#   - Storage path(s) mapped to my media library.
+# - Connected to my main LAN bridge so clients could reach it.
+
+
+# ------------------------------------------------------------
+# 3. JELLYFIN HOST CREATION
+# ------------------------------------------------------------
+
+# 3.1 Proxmox Guest Setup
+# - In the Proxmox web UI, I created a dedicated guest for Jellyfin:
+#   Option A: Full VM (e.g., Debian/Ubuntu)
+#   Option B: LXC container (lighter-weight)
+#
+# - I allocated:
+#   - Enough CPU/RAM for concurrent streams.
+#   - Storage for:
+#       - OS (if VM).
+#       - Media library mount(s) (HDD/array).
+#
+# - I gave this guest:
+#   - A static IP or DHCP reservation so I always know where Jellyfin lives.
+
+
+# ------------------------------------------------------------
+# 4. INSTALLING JELLYFIN
+# ------------------------------------------------------------
+
+# (Example assuming a Debian/Ubuntu-based environment)
+
+# 4.1 Update System
+# - Inside the Jellyfin guest:
+#   apt-get update
+#   apt-get upgrade -y
+
+# 4.2 Install Jellyfin
+# - I followed the official Jellyfin installation instructions
+#   for my distro.
+# - Typical flow:
+#   - Add Jellyfin repository.
+#   - Install via package manager:
+#       apt-get install -y jellyfin
+#
+# - This set up:
+#   - Jellyfin service
+#   - Web UI on the default port (8096 HTTP, 8920 HTTPS if configured).
+
+
+# ------------------------------------------------------------
+# 5. STORAGE & MEDIA LIBRARIES
+# ------------------------------------------------------------
+
+# 5.1 Mounting Media
+# - I pointed Jellyfin at my media storage:
+#   - Either directly attached disks on the Proxmox host (passed through
+#     or mounted into the guest),
+#   - Or network shares (NFS/SMB) from wherever I was storing content.
+#
+# - I organized folder structure something like:
+#   /media/movies
+#   /media/tv
+#   /media/other
+#
+# - Ensured the Jellyfin service user had read access to these paths.
+
+# 5.2 Verifying Access
+# - From the Jellyfin guest, I listed the media directories to confirm:
+#   ls /media/movies
+#   ls /media/tv
+#
+# - If I used network mounts, I made sure they auto-mounted on boot.
+
+
+# ------------------------------------------------------------
+# 6. INITIAL WEB UI SETUP
+# ------------------------------------------------------------
+
+# 6.1 First Login
+# - From my main PC, I opened:
+#   http://<jellyfin-ip>:8096
+#
+# - I walked through the setup wizard:
+#   - Created my admin user.
+#   - Set preferred language/region.
+#   - Added media libraries:
+#       - Type: Movies, TV Shows, etc.
+#       - Folder paths: /media/movies, /media/tv, etc.
+
+# 6.2 Metadata & Libraries
+# - I let Jellyfin scan my media.
+# - Verified:
+#   - Libraries populated correctly.
+#   - Basic metadata (titles, posters) looked good.
+#
+# - Adjusted naming or folders where needed to improve detection.
+
+
+# ------------------------------------------------------------
+# 7. NETWORK ACCESS & CLIENTS
+# ------------------------------------------------------------
+
+# 7.1 LAN Access
+# - I tested playback from:
+#   - My main PC.
+#   - Browser on laptops.
+#   - Jellyfin apps on compatible devices (if available).
+#
+# - Confirmed:
+#   - Streams started quickly.
+#   - Transcoding (if needed) didn’t crush the CPU.
+
+# 7.2 Optional Remote Access
+# - At this stage I primarily kept Jellyfin for LAN usage.
+# - When I wanted remote access:
+#   - I preferred to reach it through VPN (WireGuard),
+#     rather than exposing it directly to the internet.
+# - Later, with reverse proxy and Cloudflare in place,
+#   I had the option to integrate Jellyfin into a more
+#   controlled external access path.
+
+
+# ------------------------------------------------------------
+# 8. MAINTENANCE & INTEGRATION
+# ------------------------------------------------------------
+
+# - I set Jellyfin to:
+#   - Start on boot (handled by system service).
+#   - Regularly rescan libraries.
+#
+# - I used Proxmox snapshots (and/or backups) to:
+#   - Protect the configuration before major changes.
+#
+# - Over time, this Jellyfin instance became:
+#   - One of my "core services" running alongside AMP,
+#     Nextcloud (later), and other infrastructure.
+
+
+# ------------------------------------------------------------
+# 9. RESULT
+# ------------------------------------------------------------
+# - I successfully deployed Jellyfin as my self-hosted media server.
+# - It gave me:
+#   - Centralized access to my media collection.
+#   - A real, user-facing service that my homelab supports.
+# - Technically, this step helped me:
+#   - Practice mapping storage into guests.
+#   - Handle basic performance tuning and transcoding needs.
+#   - Think about how to expose services safely (LAN vs VPN vs public).
+#
+# This project turned my homelab from "infrastructure only" into
+# something that directly benefits people using it day-to-day.
+# ------------------------------------------------------------
+
+# End of Project 4 documentation
