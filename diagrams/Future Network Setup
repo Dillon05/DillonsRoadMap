@@ -1,15 +1,30 @@
+VLAN 10 – Family / Orbi / Mom / Brother
+VLAN 20 – My PC
+VLAN 30 – Servers (PVE1, PVE2, Nextcloud/AMP, etc.)
+VLAN 40 – Lab cluster
+VLAN 99 – Management (switches, APs, firewall UI)
+
 [Spectrum Modem]
-       │
-   (WAN port)
-       ▼
- [pfSense PC]
-   (LAN port)
-       │
-       ▼
- [Managed Switch]
-    ├──> [Orbi Router in AP Mode]   → Wi-Fi for family
-    └──> [Ethernet run to your room]
-              ▼
-          [Room Switch]
-            ├──> Your PC
-            └──> Proxmox Server
+      │
+   (WAN)
+      │
+ [OPNsense Router]
+   LAN parent (e.g. igb0) with VLANs:
+   10 = Family, 20 = You, 30 = Servers, 40 = Lab, 99 = Mgmt
+      │ (trunk: 10,20,30,40,99)
+      │
+[5-Port Managed Switch]  (Office)
+  P1: trunk to OPNsense (10,20,30,40,99 tagged)
+  P2: Orbi AP (access VLAN10)
+  P3: Mom PC (access VLAN10)
+  P4: Brother PC (access VLAN10)
+  P5: trunk to 24-port (10,20,30,40,99 tagged)
+      │
+      ▼
+[24-Port Switch]  (Your room)
+  P1: trunk from 5-port (10,20,30,40,99 tagged)
+  P2-4: Cluster nodes (access VLAN40)
+  P8: PVE2 (servers) (access VLAN30)
+  P10: PVE1 (servers) (access VLAN30)
+  P12: My PC (access VLAN20)
+  (One port for switch mgmt on VLAN99, or mgmt via tagged trunk)
