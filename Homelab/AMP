@@ -1,0 +1,173 @@
+# ============================================================
+# Project 2 – AMP + Minecraft Server on Proxmox
+# ============================================================
+# This is my personal documentation for how I deployed AMP
+# (Application Management Panel) on my Proxmox host to run a
+# managed Minecraft server. Not meant to be executed.
+# ============================================================
+
+
+# ------------------------------------------------------------
+# 1. OVERVIEW
+# ------------------------------------------------------------
+# After getting Proxmox online, my first real workload was a
+# Minecraft server. Instead of running it manually, I used AMP
+# to manage installs, updates, backups, and multiple instances.
+#
+# Goals:
+# - Learn how to deploy a real service on Proxmox.
+# - Have a clean web UI (AMP) for managing Minecraft.
+# - Keep the setup modular so I can move/scale it later.
+
+
+# ------------------------------------------------------------
+# 2. ENVIRONMENT
+# ------------------------------------------------------------
+# Host:
+# - Proxmox VE node from Project 1.
+#
+# Resources allocated to AMP VM/CT:
+# - 2–4 vCPU
+# - 4–8GB RAM (tuned based on player count and modpack)
+# - Sufficient SSD/HDD space for:
+#   - AMP itself
+#   - Minecraft world, mods, backups
+#
+# Network:
+# - Connected to my main LAN via vmbr0.
+# - Initially simple flat network (before VLAN segmentation).
+# - Port forwarding or reverse proxy added later as needed.
+
+
+# ------------------------------------------------------------
+# 3. CREATING THE AMP HOST (VM/CONTAINER)
+# ------------------------------------------------------------
+# I chose to run AMP inside a dedicated Linux guest on Proxmox
+# so I could snapshot/roll back easily.
+
+# 3.1 Create VM (example approach)
+# - In the Proxmox web UI:
+#   - Uploaded a lightweight Linux ISO (e.g., Debian/Ubuntu).
+#   - Created a new VM:
+#       - 2–4 vCPU
+#       - 4–8GB RAM
+#       - 40–80GB disk (depending on mods/world size)
+#       - Network: vmbr0, virtio NIC
+# - Booted the VM from the ISO and installed the OS normally.
+# - Set a static IP or DHCP reservation so I always know
+#   where AMP lives.
+
+
+# ------------------------------------------------------------
+# 4. AMP INSTALLATION
+# ------------------------------------------------------------
+
+# 4.1 Base System Setup (inside the VM)
+# - Updated packages:
+#   apt-get update
+#   apt-get upgrade -y
+#
+# - Installed required dependencies (varies by distro/guide),
+#   e.g.:
+#   apt-get install -y curl sudo unzip screen tmux
+
+# 4.2 Install AMP
+# - I followed the official AMP installation instructions from
+#   CubeCoders (recommended so it stays current).
+# - Typical flow:
+#   - Add AMP user.
+#   - Download and run AMP installation script.
+#   - Install AMP Core.
+#
+# - After install, I ensured AMP was set to:
+#   - Start on boot.
+#   - Listen on the correct management port (default 8080 or 8081).
+
+
+# ------------------------------------------------------------
+# 5. CONFIGURING AMP & MINECRAFT
+# ------------------------------------------------------------
+
+# 5.1 First Login to AMP
+# - From my main PC, I opened:
+#   http://<amp-vm-ip>:<amp-port>
+# - Logged in with the credentials I set during the setup.
+# - Verified I could access the AMP panel without issues.
+
+# 5.2 Create a Minecraft Instance
+# - In the AMP web UI:
+#   - Created a new Minecraft instance (e.g., Vanilla/Paper/Spigot).
+#   - Selected the correct module for Minecraft.
+#   - Set the instance location on disk (default was fine at first).
+#
+# - Configured basic settings:
+#   - Server name and MOTD.
+#   - Max players, view distance, difficulty.
+#   - Memory allocation (e.g., 4GB for modded/2GB for light use).
+#
+# - Accepted the Minecraft EULA through AMP when prompted.
+
+# 5.3 Networking & Access
+# - I confirmed the Minecraft server was listening on its port
+#   (default 25565) inside the VM.
+# - On my LAN:
+#   - I connected directly using:
+#       minecraft-server-ip:25565
+#
+# - For remote access (early stage):
+#   - I either used simple port forwarding on the router
+#     OR accessed it over VPN (WireGuard came shortly after).
+#   - Later projects replaced basic port forwarding with more
+#     secure approaches (reverse proxy, VPN, Cloudflare, etc.).
+
+
+# ------------------------------------------------------------
+# 6. BACKUPS, SNAPSHOTS & MANAGEMENT
+# ------------------------------------------------------------
+
+# - I used AMP’s built-in tools to:
+#   - Start/stop/restart the server from a browser.
+#   - Schedule automatic backups of the Minecraft world.
+#   - View console output and run commands without SSHing in.
+#
+# - On the Proxmox side:
+#   - I took snapshots of the AMP VM before major config or modpack
+#     changes so I could roll back if something broke.
+#   - This combo (AMP + Proxmox snapshots) gave me a safe way to
+#     experiment with plugins, mods, and configs.
+
+
+# ------------------------------------------------------------
+# 7. VALIDATION
+# ------------------------------------------------------------
+
+# - I (and other players) joined the server to confirm:
+#   - Stable performance for the allocated resources.
+#   - No major lag or crashes under normal load.
+# - I confirmed:
+#   - AMP was reachable consistently.
+#   - The instance auto-started on reboot (if configured).
+#   - Backups completed and could be restored through AMP.
+
+# This was my first "real" production-style service:
+# something people actually used and depended on.
+
+
+# ------------------------------------------------------------
+# 8. RESULT
+# ------------------------------------------------------------
+# - I successfully deployed AMP on a Proxmox VM and used it to
+#   host and manage a Minecraft server.
+# - This taught me:
+#   - How to structure services on top of a hypervisor.
+#   - How to separate concerns:
+#       - Proxmox = infrastructure
+#       - AMP VM = application layer
+#   - How to use snapshots, backups, and a management panel
+#     in a more professional way than a basic one-off server.
+#
+# This project proved my Proxmox host was useful and set the tone
+# for the rest of my homelab: modular, documented, and upgradeable.
+# ------------------------------------------------------------
+
+# End of Project 2 documentation
