@@ -1,0 +1,140 @@
+
+# ============================================================
+# Project 1 – Proxmox VE Deployment on Spare PC
+# ============================================================
+# This is my personal log of how I set up my first Proxmox VE
+# host in my homelab. It's documentation, not meant to be run.
+# ============================================================
+
+
+# ------------------------------------------------------------
+# 1. OVERVIEW
+# ------------------------------------------------------------
+# I started my homelab by turning a spare PC into a Proxmox VE
+# hypervisor. My goal was to:
+# - Learn a real Type-1 hypervisor.
+# - Run multiple services on one box instead of stacking bare-metal.
+# - Build a foundation I could expand with game servers, media,
+#   storage, and security tooling.
+
+
+# ------------------------------------------------------------
+# 2. HARDWARE / ENVIRONMENT
+# ------------------------------------------------------------
+# For this first node, I used a repurposed desktop PC:
+# - 64-bit CPU with VT-x/AMD-V enabled.
+# - At least 8–16GB of RAM for multiple VMs/containers.
+# - One drive dedicated for Proxmox VE.
+# - Additional storage available for VM disks.
+# - Single Ethernet NIC connected to my home network.
+#
+# This wasn’t perfect enterprise hardware; it was "what I had"
+# and I made it work.
+
+
+# ------------------------------------------------------------
+# 3. INSTALLATION STEPS
+# ------------------------------------------------------------
+
+# 3.1 Downloaded Proxmox VE ISO
+# - I went to the official Proxmox website and downloaded
+#   the latest Proxmox VE ISO.
+
+# 3.2 Created Bootable USB
+# - On another machine, I flashed the ISO to a USB drive using a tool
+#   like Rufus/balenaEtcher.
+# - I verified the USB would boot on the spare PC.
+
+# 3.3 BIOS/UEFI Setup
+# - I entered the BIOS on the spare PC and:
+#   - Enabled CPU virtualization (VT-x/AMD-V).
+#   - Enabled VT-d/IOMMU support (for potential passthrough later).
+#   - Disabled Secure Boot if needed.
+#   - Set the USB drive as the primary boot device for install.
+
+# 3.4 Installed Proxmox VE
+# - Booted from the USB and chose "Install Proxmox VE".
+# - Accepted the license and selected the target disk for Proxmox.
+# - Set:
+#   - Timezone, keyboard layout, and language.
+#   - Root password and email address for notifications.
+# - Assigned a static IP for the management interface on my LAN.
+# - Completed the installer, removed the USB, and rebooted into Proxmox.
+
+
+# ------------------------------------------------------------
+# 4. INITIAL CONFIGURATION
+# ------------------------------------------------------------
+
+# 4.1 First Login
+# - From another device on my network, I opened:
+#   https://<proxmox-ip>:8006
+# - Logged in as:
+#   user: root
+#   pass: the password I set during install.
+
+# 4.2 Updates
+# - I updated the node to make sure it was current:
+#   (adjusting repos for the no-subscription model if needed)
+#   apt-get update
+#   apt-get dist-upgrade -y
+
+# 4.3 Verified Resources
+# - In the Proxmox web UI I confirmed:
+#   - CPU and cores detected correctly.
+#   - Total RAM matched the hardware.
+#   - Local storage (OS disk + VM storage) showed up.
+# - I confirmed vmbr0 was correctly bridged to the physical NIC
+#   so VMs could reach the rest of my network.
+
+
+# ------------------------------------------------------------
+# 5. PREPARING FOR WORKLOADS
+# ------------------------------------------------------------
+
+# 5.1 ISO & Template Setup
+# - I uploaded a couple of Linux ISOs to "local" storage using:
+#   Datacenter -> node -> local -> ISO Images -> Upload.
+
+# 5.2 Test VM
+# - I created a small Linux VM to verify everything:
+#   - Attached an ISO.
+#   - Used vmbr0 for networking.
+# - I confirmed:
+#   - The VM booted successfully.
+#   - It received an IP address and had internet access.
+#   - Console access worked through the Proxmox web UI.
+
+# This confirmed that the host was ready to run real services.
+
+
+# ------------------------------------------------------------
+# 6. VALIDATION
+# ------------------------------------------------------------
+
+# - I pinged the Proxmox IP from multiple devices to confirm reachability.
+# - I accessed the web UI from my main PC without issues.
+# - I monitored CPU/RAM usage at idle to make sure nothing unstable
+#   was happening.
+# - I used Proxmox to create, start, stop, and delete a test VM,
+#   just to get comfortable with the workflow.
+# - After that, I was confident enough to start hosting real services.
+
+
+# ------------------------------------------------------------
+# 7. RESULT
+# ------------------------------------------------------------
+# - I successfully converted a spare PC into my first Proxmox VE node.
+# - This node became the base for:
+#   - My AMP-managed Minecraft server.
+#   - Early media services.
+#   - Future Nextcloud, lab VMs, and experiments.
+# - This step gave me hands-on experience with:
+#   - Installing and managing a bare-metal hypervisor.
+#   - Network bridging and static management IPs.
+#   - Basic VM lifecycle (create, snapshot, rollback).
+#
+# This was the starting point for everything else in my homelab.
+# ------------------------------------------------------------
+
+# End of Project 1 documentation 
